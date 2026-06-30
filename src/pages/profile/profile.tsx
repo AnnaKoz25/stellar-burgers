@@ -1,18 +1,30 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { AppDispatch, useSelector } from '../../services/store';
+import {
+  getUser,
+  getUserSelector,
+  setUser
+} from '../../services/slices/userSlice';
+import { useDispatch } from '../../services/store';
+import { TRegisterData } from '@api';
 
 export const Profile: FC = () => {
   /** TODO: взять переменную из стора */
-  const user = {
-    name: '',
-    email: ''
-  };
-
+  const { user } = useSelector(getUserSelector);
+  const dispatch: AppDispatch = useDispatch();
   const [formValue, setFormValue] = useState({
-    name: user.name,
-    email: user.email,
+    name: '',
+    email: '',
     password: ''
   });
+
+  useEffect(() => {
+    //чтобы загружать данные с сервера только когда требуется
+    if (!user) {
+      dispatch(getUser());
+    }
+  }, [dispatch, user]);
 
   useEffect(() => {
     setFormValue((prevState) => ({
@@ -29,13 +41,27 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (isFormChanged) {
+      // если изменилось хоть одно поле - надо знать, какое именно
+      const changeData: Partial<TRegisterData> = {};
+      if (formValue.name !== user?.name) {
+        changeData.name = formValue.name;
+      }
+      if (formValue.email !== user?.email) {
+        changeData.email = formValue.email;
+      }
+      if (formValue.password) {
+        changeData.password = formValue.password;
+      }
+      dispatch(setUser(changeData));
+    }
   };
 
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
     setFormValue({
-      name: user.name,
-      email: user.email,
+      name: user?.name ?? '', //т.к. user может быть null
+      email: user?.email ?? '',
       password: ''
     });
   };
@@ -56,6 +82,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };
