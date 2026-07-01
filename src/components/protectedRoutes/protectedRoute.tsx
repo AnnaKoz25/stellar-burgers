@@ -3,21 +3,16 @@ import { useSelector } from '../../services/store';
 import { getUserSelector } from '../../services/slices/userSlice';
 import { Preloader } from '@ui';
 import { Navigate, useLocation } from 'react-router-dom';
-import { getCookie } from '../../utils/cookie';
 
 export const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
-  const { isLoading, user } = useSelector(getUserSelector);
-  if (isLoading) {
+
+  const { isLoading, user, isAuthChecked } = useSelector(getUserSelector);
+  if (isLoading || !isAuthChecked) {
     return <Preloader />;
   }
-
-  if (!user && getCookie('accessToken')) {
-    return <Preloader />;
-  }
-
-  if (!user) {
-    return <Navigate to='/login' state={{ from: location.pathname }} replace />;
+  if (!user && isAuthChecked) {
+    return <Navigate to='/login' state={{ from: location }} replace />;
   }
   return children;
 };

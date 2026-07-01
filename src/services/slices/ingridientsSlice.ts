@@ -1,5 +1,9 @@
 import { getIngredientsApi } from '@api';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice
+} from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
 
 type TInitialState = {
@@ -26,7 +30,19 @@ export const ingredientsSlice = createSlice({
   initialState,
   reducers: {},
   selectors: {
-    getIngredientsSelectors: (state) => state
+    getIngredientsSelectors: (state) => state,
+    bunSelector: createSelector(
+      (state: TInitialState) => state.items,
+      (items) => items.filter((el) => el.type === 'bun')
+    ),
+    mainSelector: createSelector(
+      (state: TInitialState) => state.items,
+      (items) => items.filter((el) => el.type === 'main')
+    ),
+    sauceSelector: createSelector(
+      (state: TInitialState) => state.items,
+      (items) => items.filter((el) => el.type === 'sauce')
+    )
   },
   extraReducers: (builder) => {
     builder
@@ -45,5 +61,10 @@ export const ingredientsSlice = createSlice({
   }
 });
 
-export const { getIngredientsSelectors } = ingredientsSlice.selectors;
+export const {
+  getIngredientsSelectors,
+  bunSelector,
+  mainSelector,
+  sauceSelector
+} = ingredientsSlice.selectors;
 export default ingredientsSlice.reducer;

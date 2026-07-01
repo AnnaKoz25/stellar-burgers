@@ -15,18 +15,18 @@ import { deleteCookie, setCookie } from '../../utils/cookie';
 
 type TInitialStateUser = {
   user: TUser | null;
-  isAuthentificate: boolean;
   isLoading: boolean;
   error: string | null | undefined;
-  isSucces: boolean;
+  isSuccess: boolean;
+  isAuthChecked: boolean;
 };
 
 const initialState: TInitialStateUser = {
   user: null,
-  isAuthentificate: false,
   isLoading: false,
   error: null,
-  isSucces: false
+  isSuccess: false,
+  isAuthChecked: false
 };
 
 export const loginUser = createAsyncThunk(
@@ -118,6 +118,9 @@ export const userSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    clearSuccess: (state) => {
+      state.isSuccess = false;
     }
   },
   selectors: {
@@ -128,107 +131,95 @@ export const userSlice = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.isAuthentificate = false;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthentificate = false;
+        state.isAuthChecked = true;
         state.error = (action.payload as string) || action.error.message; //т.к. в экшене rejectWithValue - получим кастомную читаемую ошибку
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.isAuthentificate = true;
+        state.isAuthChecked = true;
         state.isLoading = false;
         state.user = action.payload;
       })
       .addCase(registerUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.isAuthentificate = false;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthentificate = false;
+        state.isAuthChecked = true;
         state.error = (action.payload as string) || action.error.message;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        state.isAuthentificate = true;
+        state.isAuthChecked = true;
         state.isLoading = false;
         state.user = action.payload;
       })
       .addCase(forgotPassword.pending, (state) => {
+        state.isSuccess = false;
         state.isLoading = true;
         state.error = null;
-        state.isAuthentificate = false;
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthentificate = false;
         state.error = (action.payload as string) || action.error.message;
+        state.isSuccess = false;
       })
       .addCase(forgotPassword.fulfilled, (state) => {
         state.isLoading = false;
-        state.isAuthentificate = false;
+        state.isSuccess = true;
       })
       .addCase(resetPassword.pending, (state) => {
+        state.isSuccess = false;
         state.isLoading = true;
         state.error = null;
-        state.isAuthentificate = false;
       })
       .addCase(resetPassword.rejected, (state, action) => {
-        console.log('ошибка');
         state.isLoading = false;
-        state.isAuthentificate = false;
         state.error = (action.payload as string) || action.error.message;
-        state.isSucces = false;
+        state.isSuccess = false;
       })
       .addCase(resetPassword.fulfilled, (state) => {
         state.isLoading = false;
-        state.isAuthentificate = false;
         state.error = null;
-        state.isSucces = true;
+        state.isSuccess = true;
       })
       .addCase(getUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.isAuthentificate = false;
       })
       .addCase(getUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthentificate = false;
+        state.isAuthChecked = true;
         state.error = (action.payload as string) || action.error.message;
       })
       .addCase(getUser.fulfilled, (state, action) => {
-        state.isAuthentificate = true;
+        state.isAuthChecked = true;
         state.isLoading = false;
         state.user = action.payload.user;
       })
       .addCase(setUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.isAuthentificate = true;
       })
       .addCase(setUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthentificate = true;
         state.error = (action.payload as string) || action.error.message;
       })
       .addCase(setUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthentificate = true;
         state.user = action.payload;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true;
-        state.isAuthentificate = true;
         state.error = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
-        state.isAuthentificate = true;
         state.isLoading = false;
         state.error = (action.payload as string) || action.error.message;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
-        state.isAuthentificate = false;
         state.isLoading = false;
         state.user = null;
         state.error = null;
@@ -238,4 +229,4 @@ export const userSlice = createSlice({
 
 export const { getUserSelector } = userSlice.selectors;
 export default userSlice.reducer;
-export const { clearError } = userSlice.actions;
+export const { clearError, clearSuccess } = userSlice.actions;

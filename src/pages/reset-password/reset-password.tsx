@@ -14,7 +14,7 @@ export const ResetPassword: FC = () => {
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
 
-  const { error, isLoading, isSucces } = useSelector(getUserSelector);
+  const { error, isLoading, isSuccess } = useSelector(getUserSelector);
   const dispatch: AppDispatch = useDispatch();
 
   const handleSubmit = (e: SyntheticEvent) => {
@@ -26,16 +26,16 @@ export const ResetPassword: FC = () => {
   };
 
   useEffect(() => {
-    if (isSucces && !isLoading && !error) {
+    if (isSuccess && !isLoading && !error) {
       navigate('/login', { replace: true });
     }
-  }, [navigate, error, isLoading]);
+  }, [navigate, error, isLoading, isSuccess]);
 
   useEffect(() => {
-    if (!isSucces && !localStorage.getItem('resetPassword')) {
+    if (!isSuccess && !localStorage.getItem('resetPassword')) {
       navigate('/forgot-password', { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, isSuccess]);
 
   return (
     <ResetPasswordUI

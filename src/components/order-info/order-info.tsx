@@ -1,17 +1,17 @@
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient, TOrder } from '@utils-types';
+import { TIngredient } from '@utils-types';
 import { AppDispatch, useDispatch, useSelector } from '../../services/store';
-import {
-  getIngredients,
-  getIngredientsSelectors
-} from '../../services/slices/ingridientsSlice';
+import { getIngredientsSelectors } from '../../services/slices/ingridientsSlice';
 import { getBurgerConstructorState } from '../../services/slices/burgerConstructorSlice';
 import { useParams } from 'react-router-dom';
 import { getFeedSelectors } from '../../services/slices/orderFeedSlice';
 import { getHistoryOrdersSelector } from '../../services/slices/userHistoryOrdersSlice';
-import { getOrderByNumberApi } from '@api';
+import {
+  getOrderBurgerById,
+  getOrderBurgerByIdSelector
+} from '../../services/slices/burgerByIdSlice';
 
 export const OrderInfo: FC = () => {
   /** TODO: взять переменные orderData и ingredients из стора */
@@ -28,31 +28,26 @@ export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const orderNumber = number ? Number(number) : null;
 
+  const { orderById, isLoading } = useSelector(getOrderBurgerByIdSelector);
+
   const allOrders =
     feedOrders
       .concat(userHistoryOrders)
       .find((el) => el.number === orderNumber) || null;
 
-  const [orderForModal, setOrderForModal] = useState<TOrder | null>(null);
-
   useEffect(() => {
-    if (orderNumber && !allOrders && !orderModalData) {
-      getOrderByNumberApi(orderNumber)
-        .then((res) => setOrderForModal(res.orders[0] || null))
-        .catch(() => setOrderForModal(null));
-    } else {
-      setOrderForModal(null);
+    if (
+      orderNumber &&
+      !isLoading &&
+      !orderById &&
+      !allOrders &&
+      !orderModalData
+    ) {
+      dispatch(getOrderBurgerById(orderNumber));
     }
-  }, [orderNumber, orderModalData, allOrders]);
+  }, [dispatch, isLoading, orderById, allOrders, orderNumber, orderModalData]);
 
-  useEffect(() => {
-    if (!ingredients.length) {
-      dispatch(getIngredients());
-    }
-  }, [dispatch, ingredients.length]);
-
-  const orderData = orderModalData || allOrders || orderForModal;
-
+  const orderData = orderModalData || allOrders || orderById;
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;

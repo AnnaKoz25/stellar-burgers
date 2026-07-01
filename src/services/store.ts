@@ -11,13 +11,15 @@ import burgerConstructorReducer from './slices/burgerConstructorSlice';
 import feedReducer from './slices/orderFeedSlice';
 import userReduser from './slices/userSlice';
 import userHistoryOrderReducer from './slices/userHistoryOrdersSlice';
+import burgerByIdReducer from './slices/burgerByIdSlice';
 
 const rootReducer = combineReducers({
   ingredients: ingredientReducer,
   burgerConstructor: burgerConstructorReducer,
   orderFeed: feedReducer,
   userData: userReduser,
-  historyOrders: userHistoryOrderReducer
+  historyOrders: userHistoryOrderReducer,
+  burgerById: burgerByIdReducer
 }); // Заменить на импорт настоящего редьюсера
 
 const store = configureStore({

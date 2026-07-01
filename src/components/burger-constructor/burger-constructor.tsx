@@ -3,7 +3,6 @@ import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 
 import {
-  clearAllConstructor,
   closeModalOrder,
   getBurgerConstructorState,
   orderBurger
@@ -36,7 +35,6 @@ export const BurgerConstructor: FC = () => {
   };
   const closeOrderModal = () => {
     dispatch(closeModalOrder());
-    dispatch(clearAllConstructor());
   };
 
   const price = useMemo(

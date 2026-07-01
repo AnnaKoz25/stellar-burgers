@@ -30,6 +30,7 @@ export const orderBurger = createAsyncThunk(
     }
     const allId = ingredients.map((el) => el._id);
     allId.push(bun._id);
+    allId.unshift(bun._id);
     try {
       const response = await orderBurgerApi(allId);
       const orderWithIngredients = { ...response.order, ingredients: allId }; //из-за несоответствия типов, в extraReducer нужно поле ingredients в заказе
@@ -71,16 +72,24 @@ export const burgerConstructorSlice = createSlice({
       state.orderModalData = null;
       state.orderRequest = false;
     },
-    addIngredient: (state, action: PayloadAction<TIngredient>) => {
-      const ingredient = action.payload;
-      const ingredientWithId = { ...ingredient, id: crypto.randomUUID() }; //Math.random() - не подходит, т.к. генрир. значения от 0 до 1.
-      state.ingredients.push(ingredientWithId);
+    addIngredient: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.ingredients.push(action.payload);
+      },
+      prepare: (ingredient: TIngredient) => {
+        return { payload: { ...ingredient, id: crypto.randomUUID() } };
+      }
     },
-    chooseBun: (state, action: PayloadAction<TIngredient>) => {
-      const bun = action.payload;
-      const bunWithTd = { ...bun, id: crypto.randomUUID() };
-      state.bun = bunWithTd;
+
+    chooseBun: {
+      reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
+        state.bun = action.payload;
+      },
+      prepare: (bun: TIngredient) => {
+        return { payload: { ...bun, id: crypto.randomUUID() } };
+      }
     },
+
     closeModalOrder: (state) => {
       state.orderModalData = null;
     }
@@ -101,6 +110,8 @@ export const burgerConstructorSlice = createSlice({
       .addCase(orderBurger.fulfilled, (state, action) => {
         state.orderModalData = action.payload.order;
         state.orderRequest = false;
+        state.bun = null;
+        state.ingredients = [];
       });
   }
 });

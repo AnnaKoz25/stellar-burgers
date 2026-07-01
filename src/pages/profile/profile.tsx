@@ -1,12 +1,7 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
-import { AppDispatch, useSelector } from '../../services/store';
-import {
-  getUser,
-  getUserSelector,
-  setUser
-} from '../../services/slices/userSlice';
-import { useDispatch } from '../../services/store';
+import { AppDispatch, useSelector, useDispatch } from '../../services/store';
+import { getUserSelector, setUser } from '../../services/slices/userSlice';
 import { TRegisterData } from '@api';
 
 export const Profile: FC = () => {
@@ -18,13 +13,6 @@ export const Profile: FC = () => {
     email: '',
     password: ''
   });
-
-  useEffect(() => {
-    //чтобы загружать данные с сервера только когда требуется
-    if (!user) {
-      dispatch(getUser());
-    }
-  }, [dispatch, user]);
 
   useEffect(() => {
     setFormValue((prevState) => ({

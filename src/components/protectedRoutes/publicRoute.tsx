@@ -2,16 +2,19 @@ import { ReactNode } from 'react';
 import { useSelector } from '../../services/store';
 import { getUserSelector } from '../../services/slices/userSlice';
 import { Preloader } from '@ui';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export const PublicRoute = ({ children }: { children: ReactNode }) => {
-  const { isLoading, user } = useSelector(getUserSelector);
-  if (isLoading) {
+  const { isLoading, user, isAuthChecked } = useSelector(getUserSelector);
+  const location = useLocation();
+
+  if (isLoading || !isAuthChecked) {
     return <Preloader />;
   }
 
   if (user) {
-    return <Navigate to='/' replace />;
+    const from = location.state?.from || { pathname: '/' };
+    return <Navigate to={from} replace />;
   }
 
   return children;

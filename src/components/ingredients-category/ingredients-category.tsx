@@ -21,7 +21,7 @@ export const IngredientsCategory = forwardRef<
       counters[ingredient._id]++;
     });
     if (bun) {
-      counters[bun._id] = (counters[bun._id] || 0) + 1;
+      counters[bun._id] = 2;
     }
     return counters;
   }, [bun, constructorIngredients]);

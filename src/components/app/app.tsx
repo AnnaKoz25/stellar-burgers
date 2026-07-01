@@ -17,26 +17,29 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { PublicRoute } from '../protectedRoutes/publicRoute';
 import { ProtectedRoute } from '../protectedRoutes/protectedRoute';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
-import { getCookie } from '../../utils/cookie';
+import { AppDispatch, useDispatch, useSelector } from '../../services/store';
 import { getUser, getUserSelector } from '../../services/slices/userSlice';
-
+import { getIngredients } from '../../services/slices/ingridientsSlice';
 const App = () => {
   const location = useLocation();
   const bgLocation = location.state?.background;
   const navigate = useNavigate();
   const closeModalHandler = () => {
-    navigate(-1);
+    navigate(bgLocation?.pathname || '/');
   };
-  const dispatch = useDispatch();
-  const { user } = useSelector(getUserSelector);
+  const dispatch: AppDispatch = useDispatch();
+  const { user, isAuthChecked } = useSelector(getUserSelector);
+
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, [dispatch]);
+
   useEffect(() => {
     //чтобы при перезагрузке данные профиля не обнулялись
-
-    if (getCookie('accessToken') && !user) {
+    if (!isAuthChecked && !user) {
       dispatch(getUser());
     }
-  }, [dispatch, user]);
+  }, [dispatch, user, isAuthChecked]);
   const orderNumber = location.pathname.split('/').pop() || '';
   const ingredientDetailsTitle = 'Детали ингредиента';
   const ordersTitle = '#' + orderNumber;
@@ -74,7 +77,7 @@ const App = () => {
           path='/reset-password'
           element={
             <PublicRoute>
-              <ResetPassword />{' '}
+              <ResetPassword />
             </PublicRoute>
           }
         />
@@ -97,36 +100,22 @@ const App = () => {
         <Route
           path='/ingredients/:id'
           element={
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%'
-              }}
-            >
-              <p className='text text_type_main-large'>
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main-large ${styles.detailHeader}`}>
                 {ingredientDetailsTitle}
               </p>
-              <IngredientDetails />{' '}
+              <IngredientDetails />
             </div>
           }
         />
         <Route
           path='/feed/:number'
           element={
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%'
-              }}
-            >
-              <p className='text text_type_main-large'>{ordersTitle}</p>
-              <OrderInfo />{' '}
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main-large ${styles.detailHeader}`}>
+                {ordersTitle}
+              </p>
+              <OrderInfo />
             </div>
           }
         />
@@ -134,17 +123,13 @@ const App = () => {
           path='/profile/orders/:number'
           element={
             <ProtectedRoute>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%'
-                }}
-              >
-                <p className='text text_type_main-large'>{ordersTitle}</p>
-                <OrderInfo />{' '}
+              <div className={styles.detailPageWrap}>
+                <p
+                  className={`text text_type_main-large ${styles.detailHeader}`}
+                >
+                  {ordersTitle}
+                </p>
+                <OrderInfo />
               </div>
             </ProtectedRoute>
           }
