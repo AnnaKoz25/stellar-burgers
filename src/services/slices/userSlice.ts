@@ -88,9 +88,10 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
-export const getUser = createAsyncThunk('getUser', async () => {
-  return await getUserApi();
-});
+export const getUser = createAsyncThunk(
+  'getUser',
+  async () => await getUserApi()
+);
 
 export const setUser = createAsyncThunk(
   'setUserData',

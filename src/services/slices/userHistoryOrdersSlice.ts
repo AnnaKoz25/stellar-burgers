@@ -16,9 +16,7 @@ const initialState: TInitialStateHistoryOrders = {
 
 export const getHistoryOrders = createAsyncThunk(
   'getHistoryOrders',
-  async () => {
-    return await getOrdersApi();
-  }
+  async () => await getOrdersApi()
 );
 
 export const userHistoryOrdersSlice = createSlice({

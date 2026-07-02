@@ -76,18 +76,18 @@ export const burgerConstructorSlice = createSlice({
       reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
         state.ingredients.push(action.payload);
       },
-      prepare: (ingredient: TIngredient) => {
-        return { payload: { ...ingredient, id: crypto.randomUUID() } };
-      }
+      prepare: (ingredient: TIngredient) => ({
+        payload: { ...ingredient, id: crypto.randomUUID() }
+      })
     },
 
     chooseBun: {
       reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
         state.bun = action.payload;
       },
-      prepare: (bun: TIngredient) => {
-        return { payload: { ...bun, id: crypto.randomUUID() } };
-      }
+      prepare: (bun: TIngredient) => ({
+        payload: { ...bun, id: crypto.randomUUID() }
+      })
     },
 
     closeModalOrder: (state) => {

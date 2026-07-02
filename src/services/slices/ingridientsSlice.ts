@@ -18,11 +18,8 @@ const initialState: TInitialState = {
   errors: null
 };
 
-export const getIngredients = createAsyncThunk(
-  'ingredients/getAll',
-  async () => {
-    return getIngredientsApi();
-  }
+export const getIngredients = createAsyncThunk('ingredients/getAll', async () =>
+  getIngredientsApi()
 );
 
 export const ingredientsSlice = createSlice({
