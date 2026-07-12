@@ -11,7 +11,7 @@ type TInitialState = {
   error: string | null | undefined;
 };
 
-const initialState: TInitialState = {
+export const initialState: TInitialState = {
   bun: null,
   ingredients: [],
   orderRequest: false,
