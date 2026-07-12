@@ -12,7 +12,7 @@ type TInitialState = {
   errors: string | null | undefined;
 };
 
-const initialState: TInitialState = {
+export const initialState: TInitialState = {
   items: [],
   isLoading: false,
   errors: null
